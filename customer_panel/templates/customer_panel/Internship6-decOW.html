@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer-when-downgrade"> <!-- for view preview from youtube modal-->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<title>Movieflix Web Series Customer</title>
+</head>
+<body style="background-color: #383636;" >
+    <style>
+    html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* ===== WEB SERIES HERO (SAME AS MOVIE) ===== */
+.banner-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    background-image: url('{{ series.series_banner.url }}');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* Cinematic overlay */
+.banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(15,16,20,0.95) 10%,
+        rgba(15,16,20,0.6) 40%,
+        rgba(15,16,20,0.15) 70%
+    );
+}
+
+/* Banner content */
+.series-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px;
+    max-width: 720px;
+}
+/* ===== HOTSTAR THEME CONFIGURATION ===== */
+:root {
+    --hotstar-bg: #0f1014; /* Deep space blue */
+    --hotstar-sidebar: #0f1014;
+    --hotstar-accent: #1f80e0; /* Hotstar primary blue */
+    --hotstar-text-main: #e1e6f0;
+    --hotstar-text-muted: #8f98b2;
+    --hotstar-card: #16181f;
+}
+
+.series-container {
+    display: grid;
+    /* This creates a responsive grid: cards are min 200px, max fill space */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 40px 40px; /* Vertical gap 40px, Horizontal gap 25px */
+    width: 100%;
+    padding-top: 20px;
+}
+.series-card {
+    position: relative; 
+    width: 100%; /* Let the grid control the width */
+    height: 280px; /* Set a fixed height for all cards to ensure uniformity */
+    border-radius: 5px;
+    overflow: hidden; 
+    transition: all 0.6s ease-in-out;
+    z-index: 1; 
+    cursor: pointer;
+    transform-origin: top center; 
+}
+    .series-card:hover {
+        
+        transform: scale(1.2); 
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+        z-index: 10; 
+    }
+
+    .series-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+        transition: transform 0.6s ease-in-out; 
+    }
+
+    .series-card:hover img {
+        transform: scale(1.1);
+    }
+
+    .series-details {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 0; 
+        background: rgba(0, 0, 0, 0.9); 
+        color: white;
+        padding: 0 0px;
+        transition: max-height 0.6s ease-in-out , padding 0.3s ease-in-out ; 
+        box-sizing: border-box;
+        overflow: hidden; 
+        font-size: 0.9em;
+    }
+
+    .series-card:hover .series-details {
+        max-height: 110px; 
+        padding: 10px;
+    }
+
+    /* Optional: Style the Watch Now button */
+    .series-details .btn-light { 
+        margin: 5px 0;
+        font-size: 0.8rem;
+    }   
+
+body {
+    background-color: var(--hotstar-bg) !important;
+    color: var(--hotstar-text-main) !important;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Hotstar Style */
+main > div > div:first-child {
+    background-color: var(--hotstar-sidebar) !important;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+main > div > div:first-child a {
+    background-color: transparent !important;
+    color: var(--hotstar-text-muted) !important;
+    border-radius: 0px !important;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Active State & Hover - The Hotstar "Glow" */
+main > div > div:first-child a:hover, 
+main > div > div:first-child a[style*="background-color:red"] {
+    background: linear-gradient(90deg, rgba(31, 128, 224, 0.1) 0%, transparent 100%) !important;
+    color: #fff !important;
+    border-left: 3px solid var(--hotstar-accent) !important;
+    transform: scale(1.02);
+}
+
+/* Dashboard Cards */
+.card {
+    background-color: var(--hotstar-card) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 8px !important;
+    transition: transform 0.3s ease;
+}
+    
+
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: var(--hotstar-accent) !important;
+}
+
+/* Buttons */
+.btn-primary, .btn-danger {
+    background-color: var(--hotstar-accent) !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background-color: rgba(255,255,255,0.1) !important;
+    border: none !important;
+}
+
+
+.sidebar-collapsed {
+    width: 70px !important;
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.sidebar-collapsed a {
+    padding: 12px 0 !important;
+    justify-content: center;
+}
+
+.sidebar-collapsed a i {
+    margin-right: 0 !important;
+    font-size: 1.3rem;
+}
+
+/* NOW THIS WORKS PERFECTLY */
+.sidebar-collapsed a span {
+    display: none !important;
+}
+
+/* Smooth transition */
+main > div > div:first-child {
+    transition: width 0.3s ease, border 0.3s ease;
+}
+
+/* Layout grouping */
+.layout-collapsed header,
+.layout-collapsed footer,
+.layout-collapsed main > div > div:first-child {
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.layout-collapsed main > div > div:last-child {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+}
+
+/* FIX: Align My Activity icon with other sidebar icons */
+.sidebar-collapsed a {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}
+
+/* Ensure all icons are perfectly centered */
+.sidebar-collapsed a i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+/* Hide dropdown arrow completely */
+.hide-on-collapse {
+    display: none !important;
+}
+.banner-wrapper {
+    position: relative;
+    width: 100%;
+    height: 45vh;
+    background: url('{{ series.series_banner.url }}') no-repeat center center;
+    background-size: cover;
+    background-color: #000;
+}
+
+.banner-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(to top, #0b0c0d, transparent);
+}
+
+
+
+</style>
+<div class = "desktop-wrapper content-to-blur"><header>
+<nav class = "bg d-flex align-items-center justify-content-between ms-auto" style = "height:60px;background-color:black(25,34,61)">
+    <h3 style = "color:red;padding-left:20px"><b>Movie flix</b></h3>
+    <div class = "d-flex">
+
+    {% if customer.customer_profile_pic %}
+        <img src="{{ customer.customer_profile_pic.url }}" 
+             style="width:40px; height:40px; border-radius:50%; object-fit:cover;" 
+             class="me-2">
+    {% else %}
+        <img src="https://www.citypng.com/public/uploads/preview/hd-photo-camera-black-icon-png-11637125301j0pnozhh0u.png" 
+             style="width:40px; height:40px; border-radius:50%;" 
+             class="me-2">
+    {% endif %}
+
+     <div  class = "d-flex align-items-center" style = "width:100px;background-color:black;color:white;height:38px;border-radius:5px;padding:5px;">
+        <span>{{ customer.customer_username}}</span></div>
+
+   <div class="dropdown" style = "position:relative;right:5px;" >
+      <button  type="button"  style = "width:auto;background-color:rgb(25,34,61);color:white;border:none"class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+      
+      </button>
+     <ul class="dropdown-menu" >
+        <li><a class="dropdown-item" href="#"><i class="bi bi-person-fill "></i>
+        <span>{{ customer.customer_username }}</span></a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="bi bi-person-circle me-1"></i>View Profile</a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProfileModal"><i class="bi bi-pencil-square me-1"></i>Edit Profile</a></li>
+        <li><a class="dropdown-item" href="/customer_panel/customer_profile_settings_page/"><i class="bi bi-gear-fill me-1"></i>Profile Settings</a></li>
+        <li><a class="dropdown-item" href="/customer_panel/customer_login_page/"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
+     </ul>
+   </div>
+
+   </div>
+</nav></header>
+
+<main class="d-flex overflow-hidden">
+    <div class = "d-flex " style = "height:630px;">
+        <div class="d-flex flex-column"
+     style="width:220px;flex-shrink:0;background-color:black;padding-top:20px">
+
+    <!-- TOGGLE BUTTON -->
+    <button id="sidebarToggle"
+            class="btn btn-dark btn-sm mb-3 ms-2"
+            title="Toggle Sidebar">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <a href="/customer_panel/customer_dashboard_page/"
+   class="mb-3 {% if 'dashboard' in request.path %}sidebar-active{% endif %}"
+   style="text-decoration:none;color:white;padding:5px 15px">
+   <i class="bi bi-sliders me-2"></i>Dashboard
+</a>
+
+
+    <a href="/customer_panel/customer_movie_page/"
+   class="bg-dark mb-3 {% if 'movie' in request.path %}sidebar-active{% endif %}"
+   style="text-decoration:none;color:white;padding:5px 15px">
+   <i class="bi bi-film me-2"></i>Movies
+</a>
+
+
+    <a href="/customer_panel/customer_web_series_page/"
+   class="bg-dark mb-3 {% if 'web_series' in request.path %}sidebar-active{% endif %}"
+   style="text-decoration:none;color:white;padding:5px 15px">
+   <i class="bi bi-tv me-2"></i>Web Series
+</a>
+
+
+    <div class="mb-3">
+        <a class="bg-dark d-flex align-items-center"
+   href="#"
+   data-title="My Activity"
+   style="text-decoration:none;color:white;padding:5px 15px"
+   data-bs-toggle="collapse"
+   data-bs-target="#myActivitySubmenu">
+
+    <!-- ICON (always visible) -->
+    <i class="bi bi-activity"></i>
+
+    <!-- TEXT (hidden when collapsed) -->
+    <span class="ms-2">My Activity</span>
+
+    <!-- ARROW (hide when collapsed) -->
+    <i class="bi bi-chevron-down ms-auto hide-on-collapse"></i>
+</a>
+
+
+        <div class="collapse" id="myActivitySubmenu">
+            <div style="padding-left:40px;">
+                <a class="d-block text-white py-2"
+                   href="/customer_panel/subscription_plans/"
+                   data-title="Subscription"
+                   style="text-decoration:none;">
+                    Subscription
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a class="bg-dark mb-3"
+       href="/customer_panel/customer_profile_settings_page/"
+       data-title="Profile Settings"
+       style="text-decoration:none;color:white;padding:5px 15px">
+        <i class="bi bi-gear me-2"></i>Profile Settings
+    </a>
+
+    <a class="bg-dark mb-2 mt-auto"
+       href="/customer_panel/customer_login_page/"
+       data-title="Logout"
+       style="text-decoration:none;color:white;padding:5px 15px">
+        <i class="bi bi-box-arrow-right me-2"></i>Logout
+    </a>
+
+</div>
+
+    <div style = "width:100vw;padding:20px 40px">
+        <div style="color: rgb(255, 0, 4);"><h3><b>Popular Web Series</b></h3></div >
+        
+            <form method="GET" action="{% url 'customer_web_series' %}" class="row g-3 mb-4 align-items-end px-2 ">
+                <div class="col-md-3">
+                    <label class="text-white-50 small mb-1">Language</label>
+                    <select name="language" class="form-select bg-dark text-white border-secondary " onchange="this.form.submit()">
+                        <option value="">All Languages</option>
+                        {% for lang in languages %}
+                            <option value="{{ lang.id }}" {% if lang.id|stringformat:"s" == selected_lang %}selected{% endif %}>
+                                {{ lang.language_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="text-white-50 small mb-1">Genre</label>
+                    <select name="genre" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
+                        <option value="">All Series</option>
+                        {% for genre in genres %}
+                            <option value="{{ genre.id }}" {% if genre.id|stringformat:"s" == selected_genre %}selected{% endif %}>
+                                {{ genre.genre_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="{% url 'customer_web_series' %}" class="btn btn-secondary w-100">Clear All</a>
+                </div>
+            </form>
+        
+    <div class = "d-flex  " style = "padding-top:20px;">
+        
+
+        <div class="series-container">
+    {% for series in all_series %}
+        <div class="series-card"> 
+            <a href="{% url 'web_series_player' series.id %}">
+{% if series.series_banner %}
+    <img src="{{ series.series_banner.url }}" alt="{{ series.series_title }}">
+{% else %}
+    <img src="/static/images/default-series.jpg" alt="No Banner">
+{% endif %}
+            </a> 
+           <div class="series-details">
+                {% if has_subscription %}
+                    <a href="{% url 'web_series_player' series.id %}" class="btn btn-light" style="font-size:.8rem">
+                        Watch Now
+                    </a>
+                {% else %}
+                    <a href="{% url 'subscription_plans' %}?c_type=series&c_id={{ series.id }}" class="btn btn-warning">
+    Unlock - Buy Plan
+</a>
+                {% endif %}
+                
+                <p style="font-size:0.8rem;margin-bottom: 2px; font-weight: bold;">{{ series.series_title }}</p>
+                <p style="font-size: 0.6em; margin-bottom: 5px;">{{ series.release_date|date:"Y" }} | Seasons : {{ series.total_seasons }} </p>
+                <p style="font-size: 0.6em; margin-bottom: 5px;">{{ series.series_language.language_name }} | {{ series.series_genre.genre_name }}</p>
+            </div>
+        </div> 
+    {% endfor %}
+</div>
+        
+       
+   
+       
+    </div>     
+</main>
+
+
+
+<footer>
+
+    <div class = "d-flex justify-content-center align-items-center text-white" style = "background-color:black(25,34,61);height:51px;">
+        <div style = "position:relative;left:80px"> copyright@ramansoft.com</div>
+        <div class = "d-flex justify-content-center align-items-center" style = "position:relative;left:580px;">
+            <a href = "#"><img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_logo_%28square%29.png/500px-Facebook_logo_%28square%29.png" 
+             class = "me-3" style = "width:20px;height:20px;"></a>
+            <a href = "#"><img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/2044px-WhatsApp.svg.png" 
+            class = "me-3" style = "width:20px;height:20px;"></a>
+            <a href = "#"><img src = "https://toppng.com/uploads/preview/instagram-png-logo-11545512103yiiajkgr2i.png" 
+            class = "me-2" style = "width:20px;height:20px;border-radius:5px"></a>
+            <a href = "#"><img src = "https://logos-world.net/wp-content/uploads/2020/04/Twitter-Emblem.png" 
+             style = "width:35px;height:20px"></a>
+        </div>
+    </div>
+
+
+</footer>
+</div> <!--div close tag for content-to-blur class (don't remove this)-->
+
+<!-- view profile modal -->
+<div class="modal" id="profileModal" >
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: rgb(24, 24, 24); color: white; border-radius: 10px;">
+      
+      <div class="modal-header ">
+        <h5 class="modal-title" id="profileModalLabel"><i class="bi bi-person-fill me-2"></i>Profile Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <div class="img-area mt-2 mb-1 mx-auto" style="height:100px; width:100px; border-radius:50%; overflow:hidden; border: 2px solid white;">
+            <img src="{{ customer.customer_profile_pic.url }}" style="width:100%; height:100%; object-fit:cover; object-position:center;">
+        </div>
+        <div><p id = "modal-username-display" style = "font-size:1.3rem;font-weight:500;">{{ customer.customer_username }}</p></div>
+        
+        <div class="d-flex flex-column mb-2 text-start p-3" style="background-color: rgb(24, 24, 24); border-radius: 10px;">
+            <div class = "d-flex flex-column mb-2">Email <strong><div >{{ customer.customer_email }}</div></strong></div>
+          <div class="d-flex justify-content-between mb-2" style = "padding-right:60px;">
+            <div class = "d-flex flex-column">First Name <strong><div>{{ customer.customer_first_name }}</div></strong></div>
+            <div class = "d-flex flex-column">Last Name<strong><div >{{ customer.customer_last_name }}</div></strong> </div>
+            
+          </div>
+        
+          </div>
+      </div>
+
+      <div class="modal-footer justify-content-right ">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back to Dashboard</button>
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- // edit profile modal -->
+<div class="modal" id="editProfileModal">
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content" style="background-color: rgb(24, 24, 24); color: white; border-radius: 10px;">
+
+      <form action="/customer_panel/customer_update_profile/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <div class="img-area mt-2 mb-3 mx-auto" style="height:100px; width:100px; border-radius:50%; overflow:hidden; border: 2px solid white;">
+            <img src="{{ customer.customer_profile_pic.url }}" id = "edit-modal-profile-pic" name = "customer_profile_pic" style="width:100%; height:100%; object-fit:cover; object-position:center;">
+        </div>
+        <label for="edit-input-file" class="btn btn-light btn-sm mb-4">Upload Image</label>
+       <input type="file" id="edit-input-file" name="customer_profile_pic" class="form-control" hidden accept="image/*" style="background-color: #333; color: white; border: none;">
+
+        <div class="text-start p-3">
+          
+          <div class="d-flex justify-content-between mb-3">
+            <div class="w-100 me-2">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" name = "customer_modal_first_name" value="{{ customer.customer_first_name }}" required style="  border: none;">
+            </div>
+            <div class="w-100 ms-2">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control"  name = "customer_modal_last_name" value="{{ customer.customer_last_name }}" required style="  border: none;">
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control"  name = "customer_modal_email" value="{{ customer.customer_email }}" required style="  border: none;">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control " name = "customer_modal_username" value="{{ customer.customer_username }}"required style=" border: none;">
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="modal-footer justify-content-right">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-danger" >Save Changes</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+ <!--video preview modal-->
+ {% for series in all_series %}
+<div class="modal fade" id="previewModal{{ series.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl" style="max-width: 80%;"> <!--change percentage to edit video player size -->
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Video Preview: {{ series.series_title }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="small text-white-50">Select Season</label>
+                            <label class="small text-white-50">Select Season</label>
+                            <select class="form-select mb-3 bg-dark text-white border-secondary" 
+                                    id="previewSeasonSelect{{ series.id }}" 
+                                    onchange="loadEpisodesForPreview('{{ series.id }}', this.value)">
+                                <option value="">Choose Season</option>
+                                {% for season in series.seasons_list.all %} 
+                                    <option value="{{ season.id }}">{{ season.season_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-white-50">Select Episode</label>
+                            <select id="previewEpisodeSelect{{ series.id }}" class="form-select bg-dark text-white border-secondary" 
+                                    onchange="playPreviewVideo(this)">
+                                <option value="">-- Choose Episode --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="ratio ratio-16x9 border border-secondary rounded overflow-hidden bg-black">
+                        <iframe id="previewPlayer{{ series.id }}" src="" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+    document.getElementById('edit-input-file').onchange = function() {
+        let file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                let base64Image = e.target.result;
+            
+                //  Update the preview image in the modal
+                document.getElementById('edit-modal-profile-pic').src = base64Image;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    }
+
+
+// 1. Fetch episodes via AJAX when modal opens
+// Change 1: Added seasonId parameter
+function loadEpisodesForPreview(seriesId, seasonId) {
+    const select = document.getElementById(`previewEpisodeSelect${seriesId}`);
+    
+    if (!select) return;
+
+    // Change 2: Removed the "if length > 1" check so it updates when season changes
+    select.innerHTML = '<option value="">Loading episodes...</option>';
+
+    // Change 3: Added &season_id to the URL
+    fetch(`/customer_panel/get_episodes_for_customer/?series_id=${seriesId}&season_id=${seasonId}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            select.innerHTML = '<option value="">Select Episode</option>';
+            
+            if (data.episodes.length === 0) {
+                select.innerHTML = '<option value="">No episodes found for this season</option>';
+            }
+
+            data.episodes.forEach(ep => {
+                let opt = document.createElement('option');
+                opt.value = ep.url;
+                opt.textContent = ep.title;
+                select.appendChild(opt);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading episodes:', error);
+            select.innerHTML = '<option value="">Error loading episodes</option>';
+        });
+}
+// 2. Play the selected video in the iframe
+function playPreviewVideo(selectElement) {
+    // Correctly extract ID
+    const seriesId = selectElement.id.replace('previewEpisodeSelect', '');
+    const player = document.getElementById(`previewPlayer${seriesId}`);
+    const videoUrl = selectElement.value;
+
+    if (!videoUrl || !player) {
+        if(player) player.src = "";
+        return;
+    }
+// 3. Stop video playback when modal is closed
+document.addEventListener('hidden.bs.modal', function (event) {
+    // Find any iframe inside the modal that just closed
+    const iframes = event.target.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+        // Clearing the src stops the video and audio immediately
+        iframe.src = "";
+    });
+    
+    // Also reset the dropdown selection to default
+    const selects = event.target.querySelectorAll('select');
+    selects.forEach(select => {
+        select.selectedIndex = 0;
+    });
+});
+
+    let embedUrl = videoUrl;
+    // YouTube URL Conversion Logic
+    if (videoUrl.includes("watch?v=")) {
+        const videoId = videoUrl.split("v=")[1].split("&")[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    } else if (videoUrl.includes("youtu.be/")) {
+        const videoId = videoUrl.split("youtu.be/")[1].split("?")[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+
+    player.src = embedUrl;
+}
+
+
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const sidebar = document.querySelector('main > div > div:first-child');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const body = document.body;
+
+    if (!sidebar || !toggleBtn) return;
+
+    /* Convert raw text into spans (ONE TIME PER PAGE) */
+    sidebar.querySelectorAll('a').forEach(link => {
+        const textNodes = Array.from(link.childNodes).filter(
+            node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+        );
+
+        textNodes.forEach(node => {
+            const span = document.createElement('span');
+            span.textContent = node.textContent.trim();
+            span.style.marginLeft = '8px';
+            node.replaceWith(span);
+        });
+    });
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        body.classList.toggle('layout-collapsed');
+    });
+});
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

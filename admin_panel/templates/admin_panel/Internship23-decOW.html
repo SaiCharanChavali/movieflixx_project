@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <title>Movieflix Web Series Admin</title>
+</head>
+
+<body >
+
+  <style>
+
+
+    /* ===== HOTSTAR THEME CONFIGURATION ===== */
+:root {
+    --hotstar-bg: #0f1014; /* Deep space blue */
+    --hotstar-sidebar: #0f1014;
+    --hotstar-accent: #1f80e0; /* Hotstar primary blue */
+    --hotstar-text-main: #e1e6f0;
+    --hotstar-text-muted: #8f98b2;
+    --hotstar-card: #16181f;
+}
+
+body {
+    background-color: var(--hotstar-bg) !important;
+    color: var(--hotstar-text-main) !important;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Hotstar Style */
+main > div > div:first-child {
+    background-color: var(--hotstar-sidebar) !important;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+main > div > div:first-child a {
+    background-color: transparent !important;
+    color: var(--hotstar-text-muted) !important;
+    border-radius: 0px !important;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+/* Active State & Hover - The Hotstar "Glow" */
+main > div > div:first-child a:hover, 
+main > div > div:first-child a[style*="background-color:red"] {
+    background: linear-gradient(90deg, rgba(31, 128, 224, 0.1) 0%, transparent 100%) !important;
+    color: #fff !important;
+    border-left: 3px solid var(--hotstar-accent) !important;
+    transform: scale(1.02);
+}
+
+/* Dashboard Cards */
+.card {
+    background-color: var(--hotstar-card) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 8px !important;
+    transition: transform 0.3s ease;
+}
+
+
+/* Buttons */
+.btn-primary, .btn-danger {
+    background-color: var(--hotstar-accent) !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background-color: rgba(255,255,255,0.1) !important;
+    border: none !important;
+}
+
+
+.sidebar-collapsed {
+    width: 70px !important;
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.sidebar-collapsed a {
+    padding: 12px 0 !important;
+    justify-content: center;
+}
+
+.sidebar-collapsed a i {
+    margin-right: 0 !important;
+    font-size: 1.3rem;
+}
+
+.sidebar-collapsed a span {
+    display: none !important;
+}
+
+/* Smooth animation */
+main > div > div:first-child {
+    transition: width 0.3s ease, border 0.3s ease;
+}
+
+/* ===== Layout grouping ONLY when collapsed ===== */
+.layout-collapsed header,
+.layout-collapsed footer,
+.layout-collapsed main > div > div:first-child {
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.layout-collapsed header { border-bottom: none; }
+.layout-collapsed footer { border-top: none; }
+.layout-collapsed main > div > div:first-child {
+    border-top: none;
+    border-bottom: none;
+}
+
+.layout-collapsed main > div > div:last-child {
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+}
+
+/* ================= TOOLTIPS ================= */
+
+.sidebar-collapsed a {
+    position: relative;
+}
+
+.sidebar-collapsed a::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 75px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #111;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 999;
+}
+
+.sidebar-collapsed a:hover::after {
+    opacity: 1;
+}
+
+
+
+</style>
+<div class="desktop-wrapper">
+<header style="width: 100%; position: sticky; top: 0; z-index: 1000; background-color: black;">
+<nav class = "bg d-flex align-items-center justify-content-between ms-auto" style = "height:60px;background-color:black">
+    <h3 style = "color:red;padding-left:20px"><b>Movie flix</b></h3>
+    <div class = "d-flex">
+    {% if admin.admin_profile_pic %}
+        <img src="{{ admin.admin_profile_pic.url }}" 
+             style="width:40px; height:40px; border-radius:50%; object-fit:cover;" 
+             class="me-2">
+    {% else %}
+        <img src="https://www.citypng.com/public/uploads/preview/hd-photo-camera-black-icon-png-11637125301j0pnozhh0u.png" 
+             style="width:40px; height:40px; border-radius:50%;" 
+             class="me-2">
+    {% endif %}
+
+     <div  class = "d-flex align-items-center" style = "width:100px;background-color:black;color:white;height:38px;border-radius:5px;padding:5px;">
+        <span>{{ admin.admin_username}}</span></div>
+
+   <div class="dropdown" style = "position:relative;right:5px;" >
+      <button  type="button"  style = "width:auto;background-color:black;color:white;border:none"class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+      
+      </button>
+     <ul class="dropdown-menu" >
+        <li><a class="dropdown-item" href="#"><i class="bi bi-person-fill "></i>
+        <span>{{ admin.admin_username }}</span></a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="bi bi-person-circle me-1"></i>View Profile</a></li>
+        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editProfileModal"><i class="bi bi-pencil-square me-1"></i>Edit Profile</a></li>
+        <li><a class="dropdown-item" href="/admin_panel/admin_profile_settings_page/"><i class="bi bi-gear-fill me-1"></i>Profile Settings</a></li>
+        <li><a class="dropdown-item" href="/admin_panel/admin_login_page/"><i class="bi bi-box-arrow-right me-1"></i>Logout</a></li>
+     </ul>
+   </div>
+   </div>
+</nav>
+</header>
+
+
+
+<main class="d-flex">
+<div class = "d-flex " >
+    <div class = "d-flex flex-column"  style = "width:220px;flex-shrink: 0;background-color:black;padding-top:20px">
+         <button id="sidebarToggle" class="btn btn-dark btn-sm mb-3 ms-2">
+    <i class="bi bi-list"></i>
+</button>
+            <a class = "bg-dark mb-3" href = "/admin_panel/admin_dashboard_page/" style="text-decoration:none;color:white;padding:5px 15px;"><i class="bi bi-sliders me-2"></i>Dashboard</a>
+            <a class = "bg-dark mb-3" href = "/admin_panel/admin_language_page/" style="text-decoration:none;color:white;padding:5px 15px;"><i class="bi bi-translate me-2"></i>Languages</a>
+            <a class = "bg-dark mb-3" href = "/admin_panel/admin_genre_page/" style="text-decoration:none;color:white;padding:5px 15px;"><i class="bi bi-bookmarks-fill me-2"></i>Genre</a>
+            <a class = " mb-3" href = "/admin_panel/admin_web_series_page/"" style="text-decoration:none;color:white;padding:5px 15px;background-color:red"><i class="bi bi-tv me-2"></i>Web Series</a>
+            <a class = "bg-dark mb-3" href = "/admin_panel/admin_movie_page/" style="text-decoration:none;color:white;padding:5px 15px;background-color:red"><i class="bi bi-film me-2"></i>Movies</a>
+            <a class = "bg-dark mb-3" href = "/admin_panel/admin_profile_settings_page/" style="text-decoration:none;color:white;padding:5px 15px"><i class="bi bi-gear me-2"></i>Profile Settings</a>
+            <a class = "bg-dark mb-2 mt-auto" href = "/admin_panel/admin_login_page/" style="text-decoration:none;color:white;padding:5px 15px"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+    </div>
+
+    <div style = "padding-left:40px;padding-top:20px">
+        <h4><b>Web Series Management</b></h4>
+        <hr>
+        
+        
+        <div class = "d-flex align-items-start " style = "width:100%">
+        <form method="GET" action="{% url 'admin_webseries' %}" class="d-flex align-items-start" style="width:1250px">
+        <div class="card text-white me-5" style="width:1200px; background-color:rgb(89,89,89)">
+        <div class="d-flex align-items-center text-white small" style="width:100%; height:40px; padding-left:10px;">Filter Web Series</div>
+        <div class="d-flex align-items-end form-group bg-dark" style="width:100%; padding:10px; padding-bottom:15px">
+            
+            <div class="d-flex flex-column me-5" style="min-width: 350px;">
+                <label class="small text-white-50">Language:</label>
+                <select name="language" class="form-select bg-dark text-white no-arrow" onchange="this.form.submit()">
+                    <option value="">All Languages</option>
+                    {% for lang in languages %}
+                        <option value="{{ lang.id }}" {% if selected_lang == lang.id|stringformat:"s" %}selected{% endif %}>
+                            {{ lang.language_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="d-flex flex-column me-5" style="min-width: 350px;">
+                <label class="small text-white-50">Genre:</label>
+                <select name="genre" class="form-select bg-dark text-white no-arrow" onchange="this.form.submit()">
+                    <option value="">All Genres</option>
+                    {% for gen in genres %}
+                        <option value="{{ gen.id }}" {% if selected_gen == gen.id|stringformat:"s" %}selected{% endif %}>
+                            {{ gen.genre_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            
+            <a href="{% url 'admin_webseries' %}" style="width:100px; text-decoration: none;" class="mt-4 ms-2 btn btn-outline-light d-flex align-items-center justify-content-center">
+                 Clear
+            </a>
+            
+
+        </div>
+    </div>
+</form>
+        </div> 
+
+
+<!-- --------------------------------------------------------------------------------------- -->
+        <div class = "d-flex mt-2">
+          <div class = "add webseries ">
+            <div class="card bg-dark text-white border-secondary me-2" style = "width:307px">
+                <div class="card-header text-white small" style = "background-color:rgb(89,89,89)">Add Web Series</div>
+                <div class="card-body">
+                    <form action="/admin_panel/add_web_series_action/" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label class="form-label text-white-50 small">Series Title:</label>
+                        <input type="text" name="series_title" class="form-control mb-2" placeholder="Series Title" required>
+
+                        <label class="form-label text-white-50 small">Director:</label>
+                        <input type="text" name="series_director" class="form-control mb-2" placeholder="Director Name" required>
+
+                        <label class="form-label text-white-50 small">Language:</label>
+                        <select name="series_language" class="form-select mb-2 no-arrow">
+                            <option value="" selected disabled>Select Language</option>
+                            {% for l in languages %}
+                            <option value="{{ l.id }}">{{ l.language_name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label class="form-label text-white-50 small">Genre</label>
+                        <select name="series_genre" class="form-select mb-2 no-arrow" aria-label="Default select example">
+                            <option value="" selected disabled>Select Genre</option>
+                            {% for g in genres %}
+                            <option value="{{ g.id }}">{{ g.genre_name }}</option>
+                            {% endfor %}
+                        </select>
+                         
+                        <label class="form-label text-white-50 small">Total Seasons:</label>
+                        <input type="number" name="total_seasons" class="form-control mb-2" placeholder="Total Seasons" required>
+
+                        <label class="form-label text-white-50 small">Release Date:</label>
+                        <input type="date" name="release_date" class="form-control mb-2  text-dark border-secondary" required>
+
+                        <label class="form-label text-white-50 small">Series Banner</label>
+                        <input type="file" name="series_banner" class="form-control mb-2" required>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mt-4">Add Web Series</button>
+                    </form>
+                </div>
+                </div>
+          </div>
+            
+          <div class = "add series list">
+            <div class ="card text-white bg-dark " >
+                <div class = " card-title d-flex align-items-center mb-0 text-white small"style = "width:100%;height:40px;padding-left:10px;background-color:rgb(89,89,89)">Web Series List</div>
+
+                <div class = "card d-flex justify-content-between" style = "width:875px;margin:5px;height:400px;font-size:0.7rem">
+                    <div class="table-scroll-container">
+                        <table class="table  table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Director</th>
+                                <th>Language</th> 
+                                <th>Genre</th>    
+                                <th>Total Seasons</th>
+                                <th>Season Breakdown</th>
+                                <th>Actions</th>
+                                <th>Manage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for series in all_webseries %}
+                            <tr>
+                                <td class="align-middle">{{ series.series_title }}</td>
+                                <td class="align-middle">{{ series.series_director }}</td>
+                                <td class="align-middle">{{ series.series_language.language_name }}</td>
+                                <td class="align-middle">{{ series.series_genre.genre_name }}</td>
+                                <td class="align-middle text-center">{{ series.total_seasons }}</td>
+                                <td class="align-middle">
+                                    <div class="small">
+                                        {% for breakdown in series.get_episodes_count %}
+                                            <div>{{ breakdown }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td class="align-middle">
+                                    <button class="btn btn-sm btn-outline-info mb-1" style ="font-size:.6rem" data-bs-toggle="modal" data-bs-target="#epModal{{ series.id }} ">
+                                        <i class="bi bi-plus-circle me-1"></i>Add Episodes
+                                    </button>
+                                    
+                                    <button class="btn btn-sm btn-outline-secondary" style ="font-size:.6rem" data-bs-toggle="modal" data-bs-target="#defineSeasonsModal{{ series.id }}">
+                                        <i class="bi bi-list-check me-1"></i>Define Seasons
+                                    </button>
+                                </td>
+                                <td class="align-middle">
+                                    <button class="btn btn-sm btn-outline-warning" style ="font-size:.6rem" data-bs-toggle="modal" data-bs-target="#previewModal{{ series.id }}">
+                                        <i class="bi bi-play-circle me-1"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-warning"  style ="font-size:.6rem" data-bs-toggle="modal" data-bs-target="#editEpisodesModal{{ series.id }}">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-danger" style ="font-size:.6rem" data-bs-toggle="modal" data-bs-target="#deleteModal{{ series.id }}">
+                                        <i class="bi bi-trash me-1"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+
+                            <!--edit episode modal-->
+                            <div class="modal fade" id="editEpisodesModal{{ series.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content bg-dark text-white border-secondary">
+                                        <div class="modal-header border-secondary">
+                                            <h5 class="modal-title">Manage Series & Episodes - {{ series.series_title }}</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="p-3 mb-4 border border-secondary rounded bg-dark">
+                                                <h6 class="text-warning mb-3"><i class="bi bi-pencil-square me-2"></i>Edit Series Details</h6>
+                                                <form action="/admin_panel/update_series_basic_action/" method="POST" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="series_id" value="{{ series.id }}">
+                                                    
+                                                    <div class="row g-2">
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small text-white-50">Series Title</label>
+                                                            <input type="text" name="series_title" class="form-control bg-dark text-white border-secondary" value="{{ series.series_title }}">
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small text-white-50">Series Director</label>
+                                                            <input type="text" name="series_director" class="form-control bg-dark text-white border-secondary" value="{{ series.series_director }}">
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small text-white-50">Language</label>
+                                                            <select name="series_language" class="form-select bg-dark text-white border-secondary">
+                                                                {% for l in languages %}
+                                                                <option value="{{ l.id }}" {% if series.series_language.id == l.id %}selected{% endif %}>{{ l.language_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-6 mb-2">
+                                                            <label class="small text-white-50">Genre</label>
+                                                            <select name="series_genre" class="form-select bg-dark text-white border-secondary">
+                                                                {% for g in genres %}
+                                                                <option value="{{ g.id }}" {% if series.series_genre.id == g.id %}selected{% endif %}>{{ g.genre_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-12 mb-2">
+                                                            <label class="small text-white-50 d-block">Series Banner</label>
+                                                            {% if series.series_banner %}
+                                                                <img src="{{ series.series_banner.url }}" style="width: 100px; height: 60px; object-fit: cover; border-radius: 4px;" class="mb-2 border border-secondary">
+                                                            {% endif %}
+                                                            <input type="file" name="series_banner" class="form-control form-control-sm bg-dark text-white border-secondary">
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-sm btn-primary mt-2 w-100">Update All Series Details</button>
+                                                </form>
+                                            </div>
+
+                                            <div class="p-3 border border-secondary rounded bg-dark">
+                                                <h6 class="text-info mb-3"><i class="bi bi-film me-2"></i>Manage Seasons & Episodes</h6>
+                                                <div class="d-flex justify-content-between align-items-center p-3 mb-3 border border-info rounded bg-opacity-10 bg-info">
+                                                    <div>
+                                                        <h6 class="mb-0">Current Seasons: {{ series.total_seasons }}</h6>
+                                                        <small class="text-white-50">Click to add Season {{ series.total_seasons|add:1 }}</small>
+                                                    </div>
+                                                    <form action="/admin_panel/add_season_action/" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="series_id" value="{{ series.id }}">
+                                                        <button type="submit" class="btn btn-sm btn-info">
+                                                            <i class="bi bi-plus-lg me-1"></i>Add New Season
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="small text-white-50 mb-2">Select Season to Edit</label>
+                                                    <select class="form-select bg-dark text-white border-secondary" onchange="loadEpisodesForEdit(this.value, '{{ series.id }}')">
+                                                        <option value="">-- Choose Season --</option>
+                                                        {% for sn in series.seasons_list.all %}
+                                                            <option value="{{ sn.id }}">{{ sn.season_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                <div id="episodesList{{ series.id }}" class="mt-3">
+                                                    <p class="text-muted text-center py-4">Select a season to manage episodes.</p>
+                                                </div>
+                                            </div>
+                                        </div> </div> </div> </div> 
+
+                                <!--delete series modal-->
+                                <div class="modal fade" id="deleteModal{{ series.id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content bg-dark text-white border-secondary">
+                                            <div class="modal-header border-secondary">
+                                                <h5 class="modal-title text-danger">Delete Management - {{ series.series_title }}</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+
+                                            <div class="modal-body bg-dark text-white">
+                                                <div class="mb-4">
+                                                    <label class="mb-2 small text-white-50">Select Season to manage episodes</label>
+                                                    <select class="form-select bg-dark text-white border-secondary" 
+                                                            onchange="loadEpisodesForDelete(this.value, '{{ series.id }}')">
+                                                        <option value="">-- Choose Season --</option>
+                                                        {% for sn in series.seasons_list.all %}
+                                                            <option value="{{ sn.id }}">{{ sn.season_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                <div id="deleteEpisodeList{{ series.id }}" class="mt-3">
+                                                    <p class="text-muted text-center small">Select a season to view episodes for deletion.</p>
+                                                </div>
+
+                                                <hr class="border-secondary">
+
+                                                <form action="/admin_panel/delete_season_action/" method="POST" onsubmit="return confirm('Are you sure you want to delete this entire season?');">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="series_id" id="delete_modal_series_id">
+                                                    <input type="hidden" name="season_num" id="delete_modal_season_id">
+                                                    
+                                                    <button type="submit" class="btn btn-danger w-100">
+                                                        <i class="bi bi-trash3 me-1"></i> Delete Whole Season
+                                                    </button>
+                                                </form>
+
+                                                <div class="p-3 border border-danger rounded bg-danger bg-opacity-10 mt-5">
+                                                    <h6 class="text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>DANGER ZONE</h6>
+                                                    <p class="small text-white-50 mb-3">Deleting the series title will remove every season and episode linked to it from the database forever.</p>
+                                                    
+                                                    <form action="{% url 'delete_web_series_action' %}" method="POST">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="series_id" value="{{ series.id }}">
+                                                        <button type="submit" class="btn btn-danger w-100" 
+                                                                onclick="return confirm('CRITICAL WARNING: Are you sure you want to delete the ENTIRE series: {{ series.series_title }}?')">
+                                                            Delete Entire Title (All Seasons & Episodes)
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!--video preview modal-->
+                            <div class="modal fade" id="previewModal{{ series.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content bg-dark text-white border-secondary">
+                                        <div class="modal-header border-secondary">
+                                            <h5 class="modal-title">Video Preview: {{ series.series_title }}</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="small text-white-50">Select Season</label>
+                                                    <select class="form-select bg-dark text-white border-secondary" 
+                                                            onchange="loadEpisodesForPreview(this.value, '{{ series.id }}')">
+                                                        <option value="">-- Choose Season --</option>
+                                                        {% for sn in series.seasons_list.all %}
+                                                            <option value="{{ sn.id }}">{{ sn.season_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="small text-white-50">Select Episode</label>
+                                                    <select id="previewEpisodeSelect{{ series.id }}" class="form-select bg-dark text-white border-secondary" 
+                                                            onchange="playPreviewVideo(this)">
+                                                        <option value="">-- Choose Episode --</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- Episode Banner Display -->
+                                            <div class="mb-3">
+                                                <img id="previewBanner{{ series.id }}" src="" alt="Episode Banner" class="img-fluid rounded border border-secondary" style="display:none; width:100%; max-height:300px; object-fit:cover;">
+                                                <div id="bannerPlaceholder{{ series.id }}" class="bg-secondary bg-opacity-25 rounded border border-secondary d-flex align-items-center justify-content-center" style="height:200px;">
+                                                    <p class="text-white-50 text-center">Episode banner will appear here</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="ratio ratio-16x9 border border-secondary rounded overflow-hidden bg-black">
+                                                <iframe id="previewPlayer{{ series.id }}" src="" allowfullscreen></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--define season name modal-->
+                            <div class="modal fade" id="defineSeasonsModal{{ series.id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content bg-dark text-white border-secondary">
+                                    <div class="modal-header border-secondary">
+                                        <h5 class="modal-title">Define Season Names: {{ series.series_title }}</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form action="{% url 'define_seasons_action' %}" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="series_id" value="{{ series.id }}">
+                                        <div class="modal-body">
+                                            <p class="small text-warning">Total Seasons set to: {{ series.total_seasons }}</p>
+                                            
+                                            <div id="seasonInputsContainer{{ series.id }}">
+                                                {% for season in series.seasons_list.all %}
+                                                <div class="mb-3">
+                                                    <label class="form-label small text-white-50">Season {{ forloop.counter }} Name</label>
+                                                    <input type="text" name="season_names[]" class="form-control" value="{{ season.season_name }}">
+                                                    
+                                                    <label class="form-label small text-white-50 mt-2">Release Date</label>
+                                                    <input type="date" name="season_release_dates[]" class="form-control mb-2" value="{{ season.season_release_date|date:'Y-m-d' }}">
+                                                    
+                                                    <label class="form-label small text-white-50 mt-2">Season Banner</label>
+                                                    
+                                                    <div class="d-flex align-items-center gap-3 mb-2">
+                                                        {% if season.season_banner %}
+                                                            <div class="position-relative">
+                                                                <img src="{{ season.season_banner.url }}" alt="Current Banner" 
+                                                                    style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #444;">
+                                                                <div class="small text-success mt-1" style="font-size: 10px;">
+                                                                    <i class="bi bi-check-circle-fill"></i> Image Saved
+                                                                </div>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="small text-warning" style="font-size: 10px;">
+                                                                <i class="bi bi-exclamation-triangle"></i> No Image Uploaded
+                                                            </div>
+                                                        {% endif %}
+                                                        
+                                                        <input type="file" name="season_banner_{{ forloop.counter0 }}" class="form-control form-control-sm">
+                                                    </div>
+                                                    <hr style="border-color: #444;">
+                                                </div>
+                                                {% endfor %}
+
+                                                {% with existing_count=series.seasons_list.count %}
+                                                    {% if series.total_seasons > existing_count %}
+                                                        <hr class="border-secondary">
+                                                        <p class="small text-info">New seasons detected. Please name them:</p>
+                                                        
+                                                        {% for i in series.total_seasons_range %}
+                                                            {% if i > existing_count %}
+                                                            <div class="mb-3">
+                                                                <label class="form-label small text-success">New Season {{ i }} Name</label>
+                                                                <input type="text" name="season_names[]" 
+                                                                    class="form-control bg-dark text-white border-success" 
+                                                                    placeholder="Season {{ i }}">
+                                                            </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-secondary">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save Season Names</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+            </div>
+           
+            <!--add episode modal-->
+            {% for series in all_webseries %}
+                <div class="modal fade" id="epModal{{ series.id }}">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-dark text-white">
+                            <form action="/admin_panel/add_episode_action/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="series_id" value="{{ series.id }}">
+                                <div class="modal-body">
+                                    <label>Select Season</label>
+                                    <select name="season_id" class="form-select bg-dark text-white">
+                                        {% for sn in series.seasons_list.all %}
+                                            <option value="{{ sn.id }}">{{ sn.season_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="text" name="ep_title" class="form-control mt-2" placeholder="Episode Name">
+                                    <input type="url" name="ep_url" class="form-control mt-2" placeholder="Video URL">
+
+                                    <label class="small mt-2">Release Date</label>
+                                    <input type="date" name="ep_release_date" class="form-control">
+                                    <label class="small mt-2">Episode Banner</label>
+                                    <input type="file" name="ep_banner" class="form-control">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-danger">Save Episode</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div> <!-- close row -->
+    </div> <!-- close flex-grow-1 -->
+</main>
+
+<footer>
+    <div class = "d-flex justify-content-center align-items-center text-white" style = "background-color:black;height:50px;">
+        <div style = "position:relative;left:80px"> @copyrightramanasoft</div>
+        <div class = "d-flex justify-content-center align-items-center" style = "position:relative;left:580px;">
+            <a href = "#"><img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_logo_%28square%29.png/500px-Facebook_logo_%28square%29.png" 
+             class = "me-3" style = "width:20px;height:20px;"></a>
+            <a href = "#"><img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/2044px-WhatsApp.svg.png" 
+            class = "me-3" style = "width:20px;height:20px;"></a>
+            <a href = "#"><img src = "https://toppng.com/uploads/preview/instagram-png-logo-11545512103yiiajkgr2i.png" 
+            class = "me-2" style = "width:20px;height:20px;border-radius:5px"></a>
+            <a href = "#"><img src = "https://logos-world.net/wp-content/uploads/2020/04/Twitter-Emblem.png" 
+             style = "width:35px;height:20px"></a>
+        </div>
+    </div>
+
+
+</footer>
+
+<script>
+// ==========================================
+// 1. FOR EDIT BUTTON (Bulk Edit)
+// ==========================================
+function loadEpisodesForEdit(seasonId, seriesId) {
+    if (!seasonId) return;
+    
+    const container = document.getElementById(`episodesList${seriesId}`);
+    container.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-danger"></div></div>';
+
+    fetch(`/admin_panel/get_episodes_for_edit/?series_id=${seriesId}&season_id=${seasonId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.episodes.length === 0) {
+                container.innerHTML = '<p class="text-center text-warning">No episodes found for this season.</p>';
+                return;
+            }
+
+            // Start the Bulk Update Form
+            let html = `
+                <form action="/admin_panel/update_bulk_episodes_action/" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="${document.querySelector('[name=csrfmiddlewaretoken]').value}">
+                    <div class="list-group mb-3">`;
+
+            data.episodes.forEach((ep, index) => {
+                // Banner Preview Logic
+                let bannerPreview = ep.banner_url 
+                    ? `<div class="mb-2">
+                        <img src="${ep.banner_url}" style="width: 80px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #555;">
+                        <span class="text-success small ms-2" style="font-size: 10px;">Current Banner</span>
+                       </div>`
+                    : `<div class="text-warning small mb-2" style="font-size: 10px;">No Banner</div>`;
+
+                html += `
+                    <div class="p-3 border-bottom border-secondary bg-dark mb-2 rounded">
+                        <input type="hidden" name="ep_id[]" value="${ep.id}">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="small text-white-50">Title</label>
+                                <input type="text" name="ep_title[]" class="form-control form-control-sm bg-dark text-white border-secondary" value="${ep.title}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small text-white-50">Release Date</label>
+                                <input type="date" name="ep_release_date[]" class="form-control form-control-sm bg-dark text-white border-secondary" value="${ep.release_date || ''}">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="small text-white-50">Video URL</label>
+                                <input type="url" name="ep_url[]" class="form-control form-control-sm bg-dark text-white border-secondary" value="${ep.url}">
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <label class="small text-white-50 d-block">Change Banner</label>
+                                ${bannerPreview}
+                                <input type="file" name="ep_banner_${index}" class="form-control form-control-sm bg-dark text-white border-secondary">
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            html += `
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 mt-2">
+                        <i class="bi bi-check-all me-1"></i> Save All Changes
+                    </button>
+                </form>`;
+            
+            container.innerHTML = html;
+        });
+}
+
+// ==========================================
+// 2. FOR DELETE BUTTON
+// ==========================================
+function loadEpisodesForDelete(seasonId, seriesId) {
+    // 1. Fill the hidden inputs for the "Delete Whole Season" form
+    const seriesInput = document.getElementById('delete_modal_series_id');
+    const seasonInput = document.getElementById('delete_modal_season_id');
+    
+    if(seriesInput) { seriesInput.value = seriesId; }
+    if(seasonInput) { seasonInput.value = seasonId; }
+
+    // 2. Existing logic to load the list of individual episodes
+    const container = document.getElementById(`deleteEpisodeList${seriesId}`);
+    if (!seasonId) { container.innerHTML = ''; return; }
+    
+    container.innerHTML = '<div class="text-center"><div class="spinner-border text-danger"></div></div>';
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(`/admin_panel/get_episodes_for_edit/?series_id=${seriesId}&season_id=${seasonId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.episodes.length === 0) {
+                container.innerHTML = '<p class="text-center text-warning">No episodes found.</p>';
+                return;
+            }
+
+            let html = '<ul class="list-group">';
+            data.episodes.forEach(ep => {
+                html += `
+                    <li class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                        <span>${ep.title}</span>
+                        <form action="/admin_panel/delete_episode_action/" method="POST" style="margin:0;">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                            <input type="hidden" name="ep_id" value="${ep.id}">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this episode?')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </li>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
+        });
+}
+
+// ==========================================
+// 3. FOR VIDEO PREVIEW MODAL
+// ==========================================
+function loadEpisodesForPreview(seasonId, seriesId) {
+    const select = document.getElementById(`previewEpisodeSelect${seriesId}`);
+    const player = document.getElementById(`previewPlayer${seriesId}`);
+    const banner = document.getElementById(`previewBanner${seriesId}`);
+    const bannerPlaceholder = document.getElementById(`bannerPlaceholder${seriesId}`);
+    
+    player.src = "";
+    select.innerHTML = '<option value="">-- Choose Episode --</option>';
+    banner.style.display = "none";
+    bannerPlaceholder.style.display = "flex";
+
+    if (!seasonId) return;
+
+    fetch(`/admin_panel/get_episodes_for_edit/?series_id=${seriesId}&season_id=${seasonId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.episodes.length === 0) {
+                select.innerHTML = '<option value="">-- No Episodes Found --</option>';
+                return;
+            }
+            data.episodes.forEach((ep, index) => {
+                let opt = document.createElement('option');
+                opt.value = ep.url;
+                opt.textContent = ep.title;
+                opt.dataset.banner = ep.banner_url || '';  // Store banner URL in dataset
+                select.appendChild(opt);
+            });
+            
+            // Auto-select and display the first episode
+            if (data.episodes.length > 0) {
+                select.value = data.episodes[0].url;
+                // Trigger the display of the first episode
+                const firstOption = select.options[1]; // First real option (skip placeholder)
+                if (firstOption) {
+                    const bannerUrl = data.episodes[0].banner_url;
+                    const videoUrl = data.episodes[0].url;
+                    
+                    // Display banner
+                    if (bannerUrl) {
+                        banner.src = bannerUrl;
+                        banner.style.display = "block";
+                        bannerPlaceholder.style.display = "none";
+                    } else {
+                        banner.style.display = "none";
+                        bannerPlaceholder.style.display = "flex";
+                    }
+                    
+                    // Display video
+                    let embedUrl = videoUrl;
+                    if (videoUrl.includes("watch?v=")) {
+                        const videoId = videoUrl.split("v=")[1].split("&")[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                    } else if (videoUrl.includes("youtu.be/")) {
+                        const videoId = videoUrl.split("youtu.be/")[1].split("?")[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                    }
+                    player.src = embedUrl;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading episodes:', error);
+            select.innerHTML = '<option value="">-- Error Loading Episodes --</option>';
+        });
+}
+
+function playPreviewVideo(selectElement) {
+    const seriesId = selectElement.id.replace('previewEpisodeSelect', '');
+    const player = document.getElementById(`previewPlayer${seriesId}`);
+    const banner = document.getElementById(`previewBanner${seriesId}`);
+    const bannerPlaceholder = document.getElementById(`bannerPlaceholder${seriesId}`);
+    const videoUrl = selectElement.value;
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    if (!videoUrl) { 
+        player.src = "";
+        banner.style.display = "none";
+        bannerPlaceholder.style.display = "flex";
+        return; 
+    }
+
+    // Get banner URL from dataset
+    const bannerUrl = selectedOption.dataset.banner;
+    
+    // Display banner if available
+    if (bannerUrl) {
+        banner.src = bannerUrl;
+        banner.style.display = "block";
+        bannerPlaceholder.style.display = "none";
+    } else {
+        banner.style.display = "none";
+        bannerPlaceholder.style.display = "flex";
+    }
+
+    let embedUrl = videoUrl;
+    if (videoUrl.includes("watch?v=")) {
+        const videoId = videoUrl.split("v=")[1].split("&")[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    } else if (videoUrl.includes("youtu.be/")) {
+        const videoId = videoUrl.split("youtu.be/")[1].split("?")[0];
+        embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    player.src = embedUrl;
+}
+
+// Stop video on close
+document.addEventListener('hidden.bs.modal', function (event) {
+    const iframes = event.target.querySelectorAll('iframe');
+    iframes.forEach(iframe => { iframe.src = ""; });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const sidebar = document.querySelector('main > div > div:first-child');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const body = document.body;
+
+    if (!sidebar || !toggleBtn) return;
+
+    /* Convert raw text into spans (ONE TIME PER PAGE) */
+    sidebar.querySelectorAll('a').forEach(link => {
+        const textNodes = Array.from(link.childNodes).filter(
+            node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()
+        );
+
+        textNodes.forEach(node => {
+            const span = document.createElement('span');
+            span.textContent = node.textContent.trim();
+            span.style.marginLeft = '8px';
+            node.replaceWith(span);
+        });
+    });
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        body.classList.toggle('layout-collapsed');
+    });
+});
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
