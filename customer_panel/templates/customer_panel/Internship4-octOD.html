@@ -27,12 +27,12 @@ body {
 }
 
 /* Sidebar Hotstar Style */
-main > div > div:first-child {
+main >  div:first-child {
     background-color: var(--hotstar-sidebar) !important;
     border-right: 1px solid rgba(255,255,255,0.05);
 }
 
-main > div > div:first-child a {
+main >  div:first-child a {
     background-color: transparent !important;
     color: var(--hotstar-text-muted) !important;
     border-radius: 0px !important;
@@ -42,8 +42,8 @@ main > div > div:first-child a {
 }
 
 /* Active State & Hover - The Hotstar "Glow" */
-main > div > div:first-child a:hover, 
-main > div > div:first-child a[style*="background-color:red"] {
+main >  div:first-child a:hover, 
+main >  div:first-child a[style*="background-color:red"] {
     background: linear-gradient(90deg, rgba(31, 128, 224, 0.1) 0%, transparent 100%) !important;
     color: #fff !important;
     border-left: 3px solid var(--hotstar-accent) !important;
@@ -98,7 +98,7 @@ main > div > div:first-child a[style*="background-color:red"] {
 }
 
 /* Smooth animation */
-main > div > div:first-child {
+main > div:first-child {
     transition: width 0.3s ease, border 0.3s ease;
 }
 
@@ -111,12 +111,12 @@ main > div > div:first-child {
 
 .layout-collapsed header { border-bottom: none; }
 .layout-collapsed footer { border-top: none; }
-.layout-collapsed main > div > div:first-child {
+.layout-collapsed main >  div:first-child {
     border-top: none;
     border-bottom: none;
 }
 
-.layout-collapsed main > div > div:last-child {
+.layout-collapsed main >  div:last-child {
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 8px;
 }
@@ -166,6 +166,143 @@ main > div > div:first-child {
     justify-content: center;
     width: 100%;
 }
+/* ================= HOVER EFFECTS (SAFE ADDITION) ================= */
+
+/* Language cards hover */
+button.btn.bg-dark {
+    border: 2px solid transparent;
+    transition: all 0.25s ease;
+}
+
+button.btn.bg-dark:hover {
+    border-color: var(--hotstar-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(31, 128, 224, 0.25);
+}
+
+/* Movie & Web Series cards hover */
+.flex-grow-1 img {
+    transition: all 0.25s ease;
+    border: 2px solid transparent;
+}
+
+.flex-grow-1 img:hover {
+    border-color: var(--hotstar-accent);
+    transform: scale(1.04);
+    box-shadow: 0 10px 24px rgba(31, 128, 224, 0.3);
+}
+
+/* Clear button styling */
+.btn-secondary {
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--hotstar-accent) !important;
+    background-color: rgba(31, 128, 224, 0.15) !important;
+    color: #fff !important;
+}
+/* Movies & Web Series headings color */
+.flex-grow-1 h4 {
+    color: red;
+}
+/* ===== CONTENT CARDS (Movies & Web Series) ===== */
+.flex-grow-1 img {
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border 0.35s ease;
+    border-radius: 10px;
+    border: 2px solid transparent;
+}
+
+.flex-grow-1 img:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: #1f80e0;
+    box-shadow: 0 12px 25px rgba(31, 128, 224, 0.35);
+}
+/* ===== LANGUAGE CARD HOVER EFFECT ===== */
+.flex-grow-1 button {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    border: 2px solid transparent;
+    border-radius: 12px;
+}
+
+.flex-grow-1 button:hover {
+    transform: translateY(-5px);
+    border-color: #1f80e0;
+    box-shadow: 0 10px 20px rgba(31, 128, 224, 0.35);
+}
+/* ===== CLEAR FILTER BUTTON ===== */
+.clear-btn {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.25s ease;
+}
+
+.clear-btn:hover {
+    background-color: #1f80e0;
+    border-color: #1f80e0;
+    color: white;
+    box-shadow: 0 0 12px rgba(31,128,224,0.6);
+}
+/* Movie title text polish */
+.flex-grow-1 p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+/* ===== GAP BETWEEN SECTION HEADING & CARDS ===== */
+
+/* Movies / Web Series heading row */
+.section-heading {
+    margin-bottom: 18px;   /* space below heading */
+}
+
+/* Cards container spacing */
+.section-cards {
+    margin-top: 10px;
+}
+/* ===== CLEAR FILTER BUTTON ===== */
+.clear-btn {
+    text-decoration: none !important;   /* remove underline */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 14px;
+    margin-left: 12px;
+
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;                  /* rectangular, not capsule */
+
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.clear-btn:hover {
+    background-color: rgba(31, 128, 224, 0.15);
+    border-color: #1f80e0;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* Remove underline even on hover */
+.clear-btn:hover,
+.clear-btn:focus,
+.clear-btn:active {
+    text-decoration: none !important;
+}
+.clear-btn {
+    background-color: rgba(0, 0, 0, 0.4);
+}
 
 
 
@@ -205,9 +342,8 @@ main > div > div:first-child {
 
    </div>
 </nav></header>
+<main class="d-flex overflow-hidden" style="height:630px;">
 
-<main class="d-flex overflow-hidden">
-    <div class = "d-flex " style = "height:630px;">
         <div class="d-flex flex-column"
      style="width:220px;flex-shrink:0;background-color:black;padding-top:20px">
 
@@ -287,43 +423,74 @@ main > div > div:first-child {
 </div>
  
 
-    <div class = "d-flex flex-column " style = "width:100vw;height:620px;">
-        <div class = "d-flex mt-5 justify-content-center" style = "font-size:2rem;font-weight:500"><strong>Choose Your Preferred Language</strong></div>
-            <div class = "d-flex justify-content-center felx-wrap" >
-          
-            {% for lang in languages %}
-            <button class = "btn bg-dark text-white d-flex flex-column justify-content-center align-items-center mt-5 me-3" style = "width:150px;height:150px;">
-                <i class="bi bi-globe-central-south-asia" style = "font-size:3rem"></i>
-                
-                <p class = "mb-0" style = "font-size:1.3rem"
-                value="{{ lang.id }}" {% if request.GET.language == lang.id|stringformat:"i" %}selected{% endif %}>
-                <strong>{{ lang.language_name }}</strong></p>
-                
-            </button>
-            {% endfor %}
-                    <!-- {% for lang in languages %}
-                        <option value="{{ lang.id }}" {% if request.GET.language == lang.id|stringformat:"i" %}selected{% endif %}>
-                            {{ lang.language_name }}
-                        </option>
-                    {% endfor %} -->
-            <!-- <button class = "btn bg-dark text-white mt-5 d-flex flex-column justify-content-center align-items-center me-3" style = "width:150px;height:150px;">
-                <i class="bi bi-globe-central-south-asia" style = "font-size:3rem"></i>
-                <p class = "mb-0" style = "font-size:1.3rem"><strong>Hindi</strong></p>
-            </button>
+    <div class="flex-grow-1" style="overflow-y:auto">
 
-            <button class = "btn bg-dark text-white mt-5 d-flex flex-column justify-content-center align-items-center me-3" style = "width:150px;height:150px;">
-                <i class="bi bi-globe" style = "font-size:3rem"></i>
-                <p class = "mb-0" style = "font-size:1.3rem"><strong>English</strong></p>
-            </button>
-        
-            <button class = "btn bg-dark text-white mt-5 d-flex flex-column justify-content-center align-items-center" style = "width:150px;height:150px;">
-                <i class="bi bi-globe-central-south-asia" style = "font-size:3rem"></i>
-                <p class = "mb-0" style = "font-size:1.3rem"><strong>Kannada</strong></p>
-            </button> -->
-        </div>
+    <div class="d-flex justify-content-center mt-5">
+        <h2><strong>Choose Your Preferred Language</strong></h2>
+    </div>
 
+    <!-- LANGUAGE BUTTONS (UNCHANGED LOGIC) -->
+    <div class="d-flex justify-content-center flex-wrap mt-4">
+
+        {% for lang in languages %}
+        <form method="get" class="me-3">
+            <input type="hidden" name="language" value="{{ lang.id }}">
+            <button type="submit"
+                class="btn bg-dark text-white d-flex flex-column justify-content-center align-items-center"
+                style="width:150px;height:150px;">
+                <i class="bi bi-globe-central-south-asia" style="font-size:3rem"></i>
+                <p class="mb-0"><strong>{{ lang.language_name }}</strong></p>
+            </button>
+        </form>
+        {% endfor %}
 
     </div>
+
+    {% if request.GET.language %}
+
+<div class="mt-5 ms-5 section">
+    <div class="d-flex align-items-center section-heading">
+        <h4 class="mb-0">Movies</h4>
+
+        <a href="/customer_panel/customer_dashboard_page/" class="clear-btn">
+            Clear
+        </a>
+    </div>
+
+    <div class="d-flex flex-wrap gap-4 section-cards">
+        {% for movie in movies %}
+        <div>
+            <img src="{{ movie.movie_banner.url }}"
+                 style="width:200px;height:260px;object-fit:cover;border-radius:10px;">
+            <p class="text-center mt-2">{{ movie.movie_title }}</p>
+        </div>
+        {% empty %}
+        <p>No movies found</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-5 ms-5 section">
+    <div class="section-heading">
+        <h4 class="mb-0">Web Series</h4>
+    </div>
+
+    <div class="d-flex flex-wrap gap-4 section-cards">
+        {% for series in web_series %}
+        <div>
+            <img src="{{ series.series_banner.url }}"
+                 style="width:200px;height:260px;object-fit:cover;border-radius:10px;">
+            <p class="text-center mt-2">{{ series.series_title }}</p>
+        </div>
+        {% empty %}
+        <p>No web series found</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endif %}
+
+
 </main>
 
 <footer>
@@ -461,7 +628,7 @@ main > div > div:first-child {
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const sidebar = document.querySelector('main > div > div:first-child');
+    const sidebar = document.querySelector('main > div:first-child');
     const toggleBtn = document.getElementById('sidebarToggle');
     const body = document.body;
 
