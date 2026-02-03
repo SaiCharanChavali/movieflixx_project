@@ -305,40 +305,37 @@ def get_episodes_for_edit(request):
         })
     return JsonResponse({'episodes': episode_list})
 
-# def customer_profile_settings_page(request):
-#     customer_id = request.session.get('customer_id')
-#     customer = CustomerRegister.objects.get(id=customer_id)
-#     return render(request, 'customer_panel/Internship5-decOP.html', {
-#         'customer': customer  # Pass the customer object here
-#     })
 
 def Customerchange_password(request):
     if request.method == "POST":
+        customer_id = request.session.get('customer_id')
+        if not customer_id:
+            return redirect('/customer_panel/customer_login_page/')
+
+        customer = CustomerRegister.objects.get(id=customer_id)
+
         current_pw = request.POST.get('current_password')
         new_pw = request.POST.get('new_password')
         confirm_pw = request.POST.get('confirm_password')
 
-        # 1. Get the admin from the session
-        customer_id = request.session.get('customer_id')
-        try:
-            customer = CustomerRegister.objects.get(id=customer_id)
-            
-            # 2. Check if passwords match
-            if new_pw != confirm_pw:
-                messages.error(request, "New passwords do not match!")
-            
-            # 3. Verify current password and Save
-            elif customer.customer_password == current_pw:
-                customer.customer_password = new_pw
-                customer.save()
-                messages.success(request, "Password updated successfully!")
-            else:
-                messages.error(request, "Current password is incorrect.")
-                 
-        except CustomerRegister.DoesNotExist:
-            return redirect('/customer_panel/customer_login_page/')
+        if not current_pw or not new_pw or not confirm_pw:
+            messages.error(request, "All fields are required.")
+            return redirect('/customer_panel/customer_profile_settings_page/')
 
-    # 4. THIS PREVENTS THE ERROR: It sends you back to the settings page
+        if new_pw != confirm_pw:
+            messages.error(request, "New passwords do not match!")
+            return redirect('/customer_panel/customer_profile_settings_page/')
+
+        if customer.customer_password != current_pw:
+            messages.error(request, "Current password is incorrect.")
+            return redirect('/customer_panel/customer_profile_settings_page/')
+
+        # ✅ UPDATE PASSWORD
+        customer.customer_password = new_pw
+        customer.save()
+
+        messages.success(request, "Password updated successfully!")
+
     return redirect('/customer_panel/customer_profile_settings_page/')
 
 from django.shortcuts import render, get_object_or_404
@@ -427,35 +424,6 @@ def subscription_plans_page(request):
 
 
 
-# def process_subscription(request, plan_id, c_type, c_id):
-
-#     customer_id = request.session.get('customer_id')
-#     if not customer_id:
-#         return redirect('/customer_panel/customer_login_page/')
-
-#     customer = CustomerRegister.objects.filter(id=customer_id).first()
-#     plan = SubscriptionPlan.objects.filter(id=plan_id).first()
-
-#     if not customer or not plan:
-#         messages.error(request, "Invalid subscription request.")
-#         return redirect('/customer_panel/subscription_plans/')
-
-#     # Deactivate previous subscriptions
-#     CustomerSubscription.objects.filter(
-#         customer=customer,
-#         is_active=True
-#     ).update(is_active=False)
-
-#     # Activate new subscription
-#     CustomerSubscription.objects.create(
-#         customer=customer,
-#         plan=plan,
-#         is_active=True
-#     )
-
-    
-
-#     return redirect('/customer_panel/subscription_plans/')
 
 # customer_panel/views.py
 
