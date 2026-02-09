@@ -27,8 +27,8 @@ body {
 
 body { 
     background-image:
-           linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)),
-           url('https://i.pinimg.com/1200x/51/62/84/516284904599747f8aae5319fee0a1a0.jpg');
+           /*linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)),*/
+           url('https://t3.ftcdn.net/jpg/13/71/82/02/360_F_1371820258_sX7EVDEKwtqsMD4uC93V8rubwKXqaAYx.jpg');
     background-size:cover; 
 }
 
@@ -104,13 +104,37 @@ main > div > div:first-child a[style*="background-color:red"] {
                 <div><input id="username-input" name="admin_entered_username" class="form-control" type="text" placeholder="Enter User Name" style="width:250px" required></div>
             </div>
             
-            <div class="d-flex justify-content-center mb-3" style="position: relative;">
-                <div><label class="col-form-label me-3" style="width:70px; position:relative; left:10px;">Password:</label></div>
-                <div>
-                    <input id="password" name="admin_entered_password" class="form-control" type="password" placeholder="Enter password" style="width:250px; margin-left:30px;" required>
-                </div>
-                <i style="position:absolute; right:8px; top:8px; color:black; cursor:pointer;" class="bi bi-eye-slash-fill" id="eye-icon"></i>
-            </div>
+            <div class="d-flex align-items-center mb-3 position-relative">
+    <label class="col-form-label text-end me-4" style="width:90px;">
+        Password:
+    </label>
+
+    <div class="position-relative">
+        <input
+            id="password"
+            name="admin_entered_password"
+            class="form-control pe-5"
+            type="password"
+            placeholder="Enter password"
+            style="width:250px;"
+            required
+        >
+
+        <i
+            class="bi bi-eye-slash-fill"
+            id="eye-icon"
+            style="
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #555;
+                cursor: pointer;
+            ">
+        </i>
+    </div>
+</div>
+
 
             <a href="#" class="w-100 text-end mb-4 text-decoration-none" style="color: #00e676; margin-right:90px">Forgot password?</a>
 
