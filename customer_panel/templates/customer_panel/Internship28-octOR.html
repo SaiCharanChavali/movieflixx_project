@@ -60,42 +60,41 @@ main > div > div:first-child a:last-child:hover {
            url('https://media.istockphoto.com/id/1542598409/photo/movie-podium-background-with-movie-objects-3d-rendering.jpg?s=612x612&w=0&k=20&c=taQFeF3vasOm9kUjATv9sWSIt0GiFfRLeib-mOJ58fs=');
            background-size:cover; }
 
-@media screen and (min-width: 300px) and (max-width: 768px) {
-  #register-card{
-    width:350px !important;
+/* ================= MOBILE RESPONSIVE FIX ================= */
+
+/* ================= MOBILE RESPONSIVE FIX (SAFE VERSION) ================= */
+
+@media screen and (max-width: 768px) {
+
+  #register-card {
+    width: 95% !important;
+    padding: 20px !important;
   }
-  #firstname-input{
-    width:170px !important;
+
+  /* Target ONLY the input rows */
+  #register-card > .d-flex.justify-content-center:not(:first-of-type) {
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
-  #lastname-input{
-    width:170px !important;
+
+  /* Labels full width */
+  #register-card label.col-form-label {
+    width: 100% !important;
+    margin-bottom: 5px;
   }
-  #email-input{
-    width:170px !important;
+
+  /* Inputs full width */
+  #register-card input.form-control {
+    width: 100% !important;
   }
-  #mobileno-input{
-    width:170px !important;
+
+  /* Fix eye icon position */
+  #eye-icon,
+  #confirm-eye-icon {
+    right: 12px !important;
+    top: 8px !important;
   }
-  #firstname-input{
-    width:170px !important;
-  }
-  #password-input{
-    Width:170px !important;
-  }  
-  #confirm-password-input{
-    Width:170px !important;
-  }
-  
-  #eye-icon{
-    position:relative;
-    right:25px !important;
-    top:417px !important;
-  }
-  #confirm-eye-icon{
-    position:relative;
-    right:25px !important;
-    top:470px !important;    
-  }
+
 }
 
 </style>

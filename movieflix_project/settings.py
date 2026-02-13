@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-j@gw82yozn$7@on7+15^)_u55y!l^q(9(zlrk!gqroh8p(3_)m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','192.168.68.202','127.0.0.1']
 
 
 # Application definition
@@ -143,5 +143,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-RAZOR_KEY_ID = "rzp_test_bcP0kx0UIaUrhL"
-RAZOR_KEY_SECRET = "FjLfZEeDSpr0u73pcSp0Yiqy"
+RAZOR_KEY_ID = "Your Id"
+RAZOR_KEY_SECRET = "Your Password"
